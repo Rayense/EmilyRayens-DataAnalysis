@@ -31,6 +31,7 @@ library('corrplot') #to make a correlation plot. You can use other options/packa
 library('visdat') #for missing data visualization
 library('earth')
 library('gtools')
+library('gridExtra')
 ```
 
 
@@ -205,25 +206,12 @@ Take another look at the data. You should find that for the dataset, most things
 #write code that creates a new variable called `Setting` based on `Setting_1` buth with only 2 levels, `Restaurant` and `Other`. Then remove the `Setting_1` variable. Note that restaurant is sometimes capitalized and sometimes not. You need to fix that first. For these lines of code, the 'Factor' chapter in R4DS might be helpful here.
 
 
-restaurant_settings <- subset(almost_there, Setting_1 == "restaurant" | Setting_1 == "Restaurant")
-other_settings <- subset(almost_there, Setting_1 != "restaurant" & Setting_1 != "Restaurant")
-restaurant_settings_edit <- restaurant_settings %>%
-  mutate(Setting = "Restaurant") %>%
-  select(-c(Setting_1))
-  
-other_settings_edit <- other_settings %>%
-  mutate(Setting = "Other") %>%
-  select(-c(Setting_1))
-  
-final_draft <- smartbind(restaurant_settings_edit,other_settings_edit)
-str(final_draft)
-ggplot(almost_there, aes(Setting_1, CasesAll)) + geom_point()
-ggplot(final_draft, aes(Setting, CasesAll)) + geom_point()
-
-sum(almost_there$CasesAll)
-sum(final_draft$CasesAll)
-if(sum(almost_there$RateAll) == sum(almost_there$RateAll))
-  print("Done")
+addlevel <- levels(almost_there$Setting_1) 
+Restaurant <- grep("Restaurant", almost_there$Setting_1, ignore.case = TRUE, value=TRUE)
+Other <- grep("Restaurant", almost_there$Setting_1, ignore.case = TRUE, value=TRUE,
+                  invert=TRUE)
+Final <- almost_there %>%
+  mutate(Setting = fct_collapse(Setting_1, Restaurant = restaurantlist, Other = othlist))
 ```
 
 
@@ -236,6 +224,20 @@ Next, let's create a few plots showing the outcome and the predictors.
 ```{r plots-1}
 #write code that produces plots showing our outcome of interest on the y-axis and each numeric predictor on the x-axis.
 #you can use the facet_wrap functionality in ggplot for it, or do it some other way.
+
+ggplot(final, aes(RiskAll, RateAll)) + geom_point()-> p1
+ggplot(final, aes(MedianD1, RateAll)) + geom_point() -> p2
+ggplot(final, aes(MeanD1, RateAll)) + geom_point() -> p3
+ggplot(final, aes(Hospitalizations, RateAll)) + geom_point() -> p4
+ggplot(final, aes(Vomit, RateAll)) + geom_point() -> p5
+ggplot(final, aes(MeanI1, RateAll)) + geom_point() -> p6
+ggplot(final, aes(MedianI1, RateAll)) + geom_point() -> p7
+ggplot(final, aes(CasesAll, RateAll)) + geom_point() -> p8
+ggplot(final, aes(Deaths, RateAll)) + geom_point() -> p9
+ggplot(final, aes(OBYear, RateAll)) + geom_point() -> p9
+grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, ncol=2)
+
+
 ```
 
 One thing I notice in the plots is that there are lots of zeros for many predictors and things look skewed. That's ok, but means we should probably standardize these predictors. One strange finding (that I could have caught further up when printing the numeric summaries, but didn't) is that there is (at least) one outbreak that has outbreak year reported as 0. That is, of course, wrong and needs to be fixed. There are different ways of fixing it, the best, of course, would be to trace it back and try to fix it with the right value. We won't do that here. Instead, we'll remove that observation.
