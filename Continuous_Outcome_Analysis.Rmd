@@ -77,7 +77,9 @@ Use both text summaries and plots to take a look at the new variable you created
 glimpse(d$fracinf)
 summary(d$fracinf)
 d %>%
-  ggplot(aes(fracinf, RiskAll)) + geom_point()
+  ggplot(aes(fracinf, RateAll)) + geom_point()
+
+#We plotted the data against RateAll and we can see that they have a surprisingly linear relatioship. This may indicate a relationship between these variables. 
 
 ```
 
@@ -88,7 +90,17 @@ First, create a plot that lets you quickly see if/how the variables differ.
 
 ```{r checkoutcome}
 # Plot one variable on the x axis, the other on the y axis
+d %>%
+  ggplot(aes(fracinf, RateAll)) + geom_point()
+
+#ggplot will automatically remove NA values, a total of 120 rows at this time. We also have both variables in the same units.
+
 # also plot the difference of the 2 variables
+difference <- d$RateAll - d$fracinf
+ggplot(d, aes(RiskAll, difference)) + geom_point()
+
+#This shows that the most difference between the variables occurs when RiskAll equals 0. 
+
 # make sure you adjust so both are in the same units
 ```
 
@@ -96,6 +108,11 @@ Both ways of plotting the data show that for most outbreaks, the two ways of get
 
 ```{r infvalues}
 #Write code that looks at the values of RateAll where we have inifinite values
+summary(d$RateAll)
+summary(d$fracinf)
+d %>%
+  filter(fracinf == 'Inf') %>%
+  ggplot(aes(RiskAll, RateAll)) + geom_point()
 ```
 
 You should find that all of the reported values are 0. So what makes more sense? You should have figured out that the infinite values in our computed variables arise because the `RiskAll` variable is 0. That variable contains the total number of persons at risk for an outbreak. If nobody is at risk of getting infected, of course, we can't get any infected. So `RateAll` being 0 is technically correct. But does it make sense to include "outbreaks" in our analysis where nobody is at risk of getting infected? One should question how those got into the spreadsheet in the first place. 
@@ -106,6 +123,14 @@ Here, I think that if nobody is at risk, we shouldn't include those outbreaks in
 
 ```{r filter1}
 #Write code that removes all observations that have an outcome that is not very useful, i.e. either NA or infinity. Then look at the outcome variable again to make sure things are fixed. Also check the size of the new dataset to see by how much it shrunk.
+
+d %>%
+  filter(fracinf == 'Inf')
+
+better <- d %>%
+  filter(fracinf != 'Inf')
+
+summary(d$better)
 ```
 
 
@@ -122,6 +147,14 @@ Note that - as often happens for real data - there are inconsistencies between t
 
 ```{r reducepredictors}
 #write code to select the specified variables
+moving_forward <- better %>%
+  dplyr::select(Action1, CasesAll, Category, Country, Deaths, gg2c4, Hemisphere, Hospitalizations, MeanA1, MeanD1, MeanI1, MedianA1, MedianD1, MedianI1, OBYear, Path1, RiskAll, season, Setting_1, Setting_2, Trans1, Vomit, RateAll, fracinf)
+
+str(moving_forward)
+summary(moving_forward)
+
+#We can see we have 579 observations and 22 variables.
+
 ```
 
 Your reduced dataset should contain 579 observations and 22 variables.
