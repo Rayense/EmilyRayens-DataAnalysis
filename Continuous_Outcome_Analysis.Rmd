@@ -225,32 +225,36 @@ Next, let's create a few plots showing the outcome and the predictors.
 #write code that produces plots showing our outcome of interest on the y-axis and each numeric predictor on the x-axis.
 #you can use the facet_wrap functionality in ggplot for it, or do it some other way.
 
-ggplot(final, aes(RiskAll, RateAll)) + geom_point()-> p1
-ggplot(final, aes(MedianD1, RateAll)) + geom_point() -> p2
-ggplot(final, aes(MeanD1, RateAll)) + geom_point() -> p3
-ggplot(final, aes(Hospitalizations, RateAll)) + geom_point() -> p4
-ggplot(final, aes(Vomit, RateAll)) + geom_point() -> p5
-ggplot(final, aes(MeanI1, RateAll)) + geom_point() -> p6
-ggplot(final, aes(MedianI1, RateAll)) + geom_point() -> p7
-ggplot(final, aes(CasesAll, RateAll)) + geom_point() -> p8
-ggplot(final, aes(Deaths, RateAll)) + geom_point() -> p9
-ggplot(final, aes(OBYear, RateAll)) + geom_point() -> p9
-grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, ncol=2)
-
-
+final %>% select_if(is.numeric)->plots1
+plots1.m = reshape2::melt(plots1, id.var="fracinf")
+plots1.m %>%
+  ggplot(.,aes(x=value, y=fracinf)) +
+  geom_line() +
+  facet_wrap(plots1.m$variable)
 ```
+
 
 One thing I notice in the plots is that there are lots of zeros for many predictors and things look skewed. That's ok, but means we should probably standardize these predictors. One strange finding (that I could have caught further up when printing the numeric summaries, but didn't) is that there is (at least) one outbreak that has outbreak year reported as 0. That is, of course, wrong and needs to be fixed. There are different ways of fixing it, the best, of course, would be to trace it back and try to fix it with the right value. We won't do that here. Instead, we'll remove that observation.
 
-```{r remove-wrong-year}
-# write code that figures out which observation(s) have 0 years and remove those from the dataset.
-# do some quick check to make sure OByear values are all reasonable now
+```{r}
+#write code that figures out which observation(s) have 0 years and remove those from the dataset.
+#do some quick check to make sure OByear values are all reasonable now 
+
+which(final$OBYear == 0)
+finalyear <- final[-219,] 
+finalyear %>% select_if(is.numeric)->num0
+num0.m = reshape2::melt(num0, id.var="fracinf")
 ```
+
 
 Another useful check is to see if there are strong correlations between some of the numeric predictors. That might indicate collinearity, and some models can't handle that very well. In such cases, one might want to remove a predictor. We'll create a correlation plot of the numeric variables to inspect this.
 
 ```{r corrplot}
 # using e.g. the corrplot package (or any other you like), create a correlation plot of the numeric variables
+
+CorrPlot <- cor(num0)
+#corrplot(CorrPlot, method="numeric")
+corrplot(CorrPlot, method="number")
 ```
 
 
@@ -262,6 +266,13 @@ Next, let's create plots for the categorical variables, again our main outcome o
 ```{r plots-2}
 #write code that produces plots showing our outcome of interest on the y-axis and each categorical predictor on the x-axis.
 #you can use the facet_wrap functionality in ggplot for it, or do it some other way.
+
+finalyear %>% select_if(is.factor)->catpredict
+finalyear['fracinf'] -> catpredict['fracinf']
+catpredict.m = reshape2::melt(catpredict, id.var="fracinf")
+ggplot(catpredict.m)+
+  geom_dotplot(aes(x = value, fill = fracinf))+
+  facet_wrap(~variable)
 ```
 
 The plots do not look pretty, which is ok for exploratory. We can see that a few variables have categories with very few values (again, something we could have also seen using `summary`, but graphically it is usually easier to see). This will likely produce problems when we fit using cross-validation, so we should fix that. Options we have: 
@@ -274,7 +285,9 @@ Let's use a mix of these approaches. We'll drop the `Category` variable, we'll r
 
 ```{r clean-categorical}
 # write code that implements the cleaning steps described above.
-# then check again (e.g. with a plot) to make sure things worked
+# then check again (e.g. with a plot) to make sure things worked.
+
+
 ```
 
 
@@ -294,11 +307,11 @@ Depending on the data and question, we might want to reserve some of the data fo
 
 ```{r split-data}
 #this code does the data splitting. I still assume that your data is stored in the `d` object.
-#uncomment to run
-#set.seed(123)
-#trainset <- caret::createDataPartition(y = d$fracinf, p = 0.7, list = FALSE)
-#data_train = d[trainset,] #extract observations/rows for training, assign to new variable
-#data_test = d[-trainset,] #do the same for the test set
+
+set.seed(123)
+trainset <- caret::createDataPartition(y = finalyear$fracinf, p = 0.7, list = FALSE)
+data_train = finalyear[trainset,] #extract observations/rows for training, assign to new variable
+data_test = finalyear[-trainset,] #do the same for the test set
 ```
 
 :::note
