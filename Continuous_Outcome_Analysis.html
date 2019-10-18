@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="YOURNAME" />
+
+<meta name="date" content="2019-10-18" />
+
+<title>Continuous Outcome Analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="customstyles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data Analysis Exercise Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Analyses
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="./Continuous_Outcome_Analysis.html">Continuous Outcome Analysis</a>
+    </li>
+    <li class="dropdown-header">Future Analysis</li>
+  </ul>
+</li>
+<li>
+  <a href="./Author.html">About the Author</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="URL-TO-THIS-REPOSITORY-HERE">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Continuous Outcome Analysis</h1>
+<h4 class="author">YOURNAME</h4>
+<h4 class="date">2019-10-18</h4>
+
+</div>
+
+
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<p>This document will guide you through a few data analysis and model fitting tasks.</p>
+<p>Below, I provide commentary and instructions, and you are expected to write all or some of the missing code to perform the steps I describe.</p>
+<p>Note that I call the main data variable <code>d</code>. So if you see bits of code with that variable, it is the name of the data. You are welcome to give it different names, then just adjust the code snippets accordingly.</p>
+</div>
+<div id="project-setup" class="section level1">
+<h1>Project setup</h1>
+<p>We need a variety of different packages, which are loaded here. Install as needed. If you use others, load them here.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&#39;tidyr&#39;</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&#39;dplyr&#39;</span>)</a></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&#39;forcats&#39;</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&#39;ggplot2&#39;</span>)</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="kw">library</span>(<span class="st">&#39;corrplot&#39;</span>) <span class="co">#to make a correlation plot. You can use other options/packages.</span></a></code></pre></div>
+<pre><code>## corrplot 0.84 loaded</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&#39;visdat&#39;</span>) <span class="co">#for missing data visualization</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&#39;earth&#39;</span>)</a></code></pre></div>
+<pre><code>## Loading required package: Formula</code></pre>
+<pre><code>## Loading required package: plotmo</code></pre>
+<pre><code>## Loading required package: plotrix</code></pre>
+<pre><code>## Loading required package: TeachingDemos</code></pre>
+</div>
+<div id="data-loading" class="section level1">
+<h1>Data loading</h1>
+<p>We will be exploring and fitting a dataset of norovirus outbreaks. You can look at the codebook, which briefly explains the meaning of each variable. If you are curious, you can check some previous papers that we published using (slighly different versions of) this dataset <a href="http://handelgroup.uga.edu/publication/devasia15epiinf/">here</a> and <a href="http://handelgroup.uga.edu/publication/desai2012cid/">here</a>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="co">#Write code that loads the dataset and does a quick check to make sure the data loaded ok (using e.g. `str` and `summary` or similar such functions).</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">data_raw &lt;-<span class="kw">read.csv</span>(<span class="st">&quot;./norodata.csv&quot;</span>)</a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="kw">str</span>(data_raw)</a></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    1022 obs. of  139 variables:
+##  $ id                   : int  2 17 39 40 41 42 43 44 67 74 ...
+##  $ Author               : Factor w/ 217 levels &quot; kagawa-Okamoto&quot;,..: 3 9 16 16 16 16 16 16 25 28 ...
+##  $ Pub_Year             : int  2005 2000 2009 2009 2009 2009 2009 2009 2009 1994 ...
+##  $ pubmedid             : int  15841336 11071673 19205471 19205471 19205471 19205471 19205471 19205471 19440360 8202078 ...
+##  $ EpiCurve             : Factor w/ 3 levels &quot;&quot;,&quot;N&quot;,&quot;Y&quot;: 3 3 2 2 2 2 2 2 2 2 ...
+##  $ TDComment            : Factor w/ 11 levels &quot;&quot;,&quot;Just norovirus outbreak&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ AHComment            : Factor w/ 3 levels &quot;&quot;,&quot;confirmed&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Trans1               : Factor w/ 6 levels &quot;Environmental&quot;,..: 5 2 2 2 2 2 2 2 5 2 ...
+##  $ Trans1_O             : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Trans2               : Factor w/ 6 levels &quot;  (not applicable)&quot;,..: 1 5 1 1 1 1 1 1 1 1 ...
+##  $ Trans2_O             : Factor w/ 2 levels &quot;0&quot;,&quot;Direct contact with diarrhea or vomitus&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Trans3               : Factor w/ 6 levels &quot;  (not applicable)&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Trans3_O             : Factor w/ 2 levels &quot;0&quot;,&quot;smoking&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Risk1                : num  0 108 130 4 25 ...
+##  $ Risk2                : num  NA NA NA NA NA NA NA NA NA NA ...
+##  $ RiskAll              : num  0 108 130 4 25 ...
+##  $ Cases1               : int  15 43 27 4 15 6 40 10 116 45 ...
+##  $ Cases2               : int  NA 22 NA NA NA NA NA NA NA NA ...
+##  $ CasesAll             : int  15 65 27 4 15 6 40 10 116 45 ...
+##  $ Rate1                : num  NA 39.8 20.8 100 60 ...
+##  $ Rate2                : num  NA NA NA NA NA NA NA NA NA NA ...
+##  $ RateAll              : num  0 39.8 20.8 100 60 ...
+##  $ Hospitalizations     : int  0 0 0 0 0 0 0 0 5 10 ...
+##  $ Deaths               : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Vehicle_1            : Factor w/ 126 levels &quot;0&quot;,&quot;Aerosolized vomit&quot;,..: 1 6 1 1 1 1 1 1 1 73 ...
+##  $ Veh1                 : Factor w/ 4 levels &quot;No&quot;,&quot;Unknown&quot;,..: 3 4 3 3 3 3 3 3 3 4 ...
+##  $ Veh1_D_1             : Factor w/ 163 levels &quot;0&quot;,&quot;aerosilized&quot;,..: 1 159 1 1 1 1 1 1 1 107 ...
+##  $ Veh2                 : Factor w/ 2 levels &quot;No&quot;,&quot;Yes&quot;: 1 2 1 1 1 1 1 1 1 1 ...
+##  $ Veh2_D_1             : Factor w/ 63 levels &quot;&quot;,&quot;0&quot;,&quot;accommodation environment on day of arrival&quot;,..: 2 21 2 2 2 2 2 2 2 2 ...
+##  $ Veh3                 : Factor w/ 2 levels &quot;No&quot;,&quot;Yes&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Veh3_D_1             : Factor w/ 19 levels &quot;&quot;,&quot;0&quot;,&quot;Brandy S ps&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ PCRSect              : Factor w/ 4 levels &quot;Both&quot;,&quot;Capsid&quot;,..: 2 3 1 1 1 1 1 1 1 4 ...
+##  $ OBYear               : Factor w/ 23 levels &quot;0&quot;,&quot;1983&quot;,&quot;1990&quot;,..: 11 10 19 19 19 19 19 19 17 5 ...
+##  $ Hemisphere           : Factor w/ 3 levels &quot;Northern&quot;,&quot;Southern&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ season               : Factor w/ 5 levels &quot;&quot;,&quot;Fall&quot;,&quot;Spring&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ MeanI1               : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ MedianI1             : int  0 37 0 0 0 0 0 0 0 31 ...
+##  $ Range_S_I1           : num  0 0 0 0 0 0 0 0 0 2 ...
+##  $ Range_L_I1           : num  0 0 0 0 0 0 0 0 0 69 ...
+##  $ MeanD1               : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ MedianD1             : num  0 36 0 0 0 0 0 0 0 48 ...
+##  $ Range_S_D1           : num  0 0 0 0 0 0 0 0 0 10 ...
+##  $ Range_L_D1           : int  0 0 0 0 0 0 0 0 0 168 ...
+##  $ MeanA1               : num  NA NA NA NA NA NA NA NA NA NA ...
+##  $ MedianA1             : num  NA NA NA NA NA NA NA NA NA NA ...
+##  $ Range_Y_A1           : Factor w/ 49 levels &quot;&lt;1&quot;,&quot;0&quot;,&quot;0.167&quot;,..: 8 2 2 2 2 2 2 2 2 2 ...
+##  $ Range_O_A1           : num  2 0 0 0 0 0 0 0 0 0 ...
+##  $ Action1              : Factor w/ 4 levels &quot;No&quot;,&quot;Unknown&quot;,..: 3 3 3 3 3 3 3 3 3 4 ...
+##  $ Action2_1            : Factor w/ 186 levels &quot;&quot;,&quot;\tContami ted batch withdrawn from market; Finnish authorities issued alert through Rapid Alert System for Food&quot;| __truncated__,..: 5 5 5 5 5 5 5 5 5 108 ...
+##  $ Secondary            : Factor w/ 3 levels &quot;&quot;,&quot;No&quot;,&quot;Yes&quot;: 2 3 2 2 2 2 2 2 2 2 ...
+##  $ MeanI2               : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ MedianI2             : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Range_S_I2           : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Range_L_I2           : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ MeanD2               : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ MedianD2             : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Range_S_D2           : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Range_L_D2           : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Mea.2                : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Media.2              : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Range_Y_A2           : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Range_O_A2           : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ Comments_1           : Factor w/ 989 levels &quot;&quot;,&quot; turally recombi nt GII NV outbreak occurred in infant home in Sapporo, Japan where only residents who were up &quot;| __truncated__,..: 918 938 978 979 980 981 984 982 350 853 ...
+##  $ Path1                : Factor w/ 4 levels &quot;No&quot;,&quot;Unknown&quot;,..: 1 1 3 3 3 3 3 3 1 3 ...
+##  $ Path2_1              : Factor w/ 59 levels &quot;&quot;,&quot;0&quot;,&quot;adenovirus&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ Country              : Factor w/ 22 levels &quot;Australia&quot;,&quot;Austria&quot;,..: 12 22 17 17 17 17 17 17 17 22 ...
+##  $ Category             : Factor w/ 12 levels &quot;Daycare&quot;,&quot;Foodservice&quot;,..: 1 2 2 2 2 2 2 2 6 12 ...
+##  $ State                : Factor w/ 36 levels &quot;0&quot;,&quot;1&quot;,&quot;14 states: CA, UT, KS, WI, IL, IN, OH, GA, FL, NC, VA, WV, NY, PA,&quot;,..: 1 21 1 1 1 1 1 1 1 9 ...
+##  $ Setting_1            : Factor w/ 388 levels &quot;\tPsychiatric Care Center adjoined&quot;,..: 121 32 39 310 39 352 39 310 201 3 ...
+##  $ StartMonth           : int  11 9 9 10 11 11 11 11 11 11 ...
+##  $ EndMonth             : int  12 9 0 0 0 0 0 0 11 11 ...
+##  $ GGA                  : int  2 1 2 0 2 0 0 0 2 0 ...
+##  $ CA                   : int  4 0 4 0 4 0 0 0 4 0 ...
+##  $ SA                   : Factor w/ 123 levels &quot;0&quot;,&quot;100% identity w/AB05308, 96% identity w/MOH&quot;,..: 62 115 34 1 35 1 1 1 122 1 ...
+##  $ new_GGA              : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ new_CA               : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ new_SA               : Factor w/ 27 levels &quot;0&quot;,&quot;ARG320-USA&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ SA_resolved_from     : Factor w/ 9 levels &quot;&quot;,&quot;abstraction&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ GGB                  : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ CB                   : Factor w/ 18 levels &quot;0&quot;,&quot;1&quot;,&quot;10&quot;,&quot;12&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ SB                   : Factor w/ 38 levels &quot;0&quot;,&quot;93.7% homology w/Saitama&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ new_GGB              : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ new_CB               : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ new_SB               : Factor w/ 14 levels &quot;0&quot;,&quot;Birmingham&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ SB_resolved_from     : Factor w/ 6 levels &quot;&quot;,&quot;abstraction&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ GGC                  : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ CC                   : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ SC                   : Factor w/ 25 levels &quot;0&quot;,&quot;95% homology with Sundsvall&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ new_ggc              : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ new_cc               : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ new_sc               : Factor w/ 5 levels &quot;0&quot;,&quot;Fayetteville&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ SC_resolved_from     : Factor w/ 4 levels &quot;&quot;,&quot;abstraction&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ GGD                  : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ CD                   : Factor w/ 13 levels &quot;0&quot;,&quot;1&quot;,&quot;12&quot;,&quot;14&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ SD                   : Factor w/ 8 levels &quot;0&quot;,&quot;Amsterdam&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ new_ggd              : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ new_cd               : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ new_sd               : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ SD_resolved_from     : logi  NA NA NA NA NA NA ...
+##   [list output truncated]</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">summary</span>(data_raw)</a></code></pre></div>
+<pre><code>##        id              Author       Pub_Year       pubmedid       
+##  Min.   :   1.0   Iritani : 83   Min.   :1993   Min.   : 7514927  
+##  1st Qu.: 256.2   Kageyama: 63   1st Qu.:2003   1st Qu.:12938042  
+##  Median : 511.5   Lysen   : 60   Median :2005   Median :16231127  
+##  Mean   : 511.6   Ozawa   : 55   Mean   :2005   Mean   :15890029  
+##  3rd Qu.: 766.8   Hamano  : 43   3rd Qu.:2008   3rd Qu.:18495859  
+##  Max.   :1024.0   Fukuda  : 39   Max.   :2011   Max.   :21537761  
+##                   (Other) :679                  NA&#39;s   :3         
+##  EpiCurve                                                     TDComment  
+##   :  7                                                             :994  
+##  N:784    Not sure                                                 : 12  
+##  Y:231    Not found in folder of articles                          :  6  
+##           Not found on Pubmed                                      :  3  
+##           Just norovirus outbreak                                  :  1  
+##           No vomiting in some outbreaks but those are not specified:  1  
+##           (Other)                                                  :  5  
+##                AHComment                 Trans1       Trans1_O
+##                     :1012   Environmental   : 12   Min.   :0  
+##  confirmed          :   8   Foodborne       :391   1st Qu.:0  
+##  probably not usable:   2   Person to Person:166   Median :0  
+##                             Unknown         : 63   Mean   :0  
+##                             Unspecified     :318   3rd Qu.:0  
+##                             Waterborne      : 72   Max.   :0  
+##                                                               
+##                 Trans2                                       Trans2_O   
+##    (not applicable):928   0                                      :1021  
+##  Environmental     : 42   Direct contact with diarrhea or vomitus:   1  
+##  Foodborne         :  8                                                 
+##  Other             :  1                                                 
+##  Person to Person  : 42                                                 
+##  Waterborne        :  1                                                 
+##                                                                         
+##                 Trans3        Trans3_O        Risk1         
+##    (not applicable):1007   0      :1021   Min.   :    0.00  
+##  Environmental     :   7   smoking:   1   1st Qu.:    0.00  
+##  Foodborne         :   4                  Median :   10.00  
+##  Other             :   1                  Mean   :  374.57  
+##  Person to Person  :   2                  3rd Qu.:   95.75  
+##  Waterborne        :   1                  Max.   :35000.00  
+##                                                             
+##      Risk2           RiskAll            Cases1            Cases2       
+##  Min.   : 66.00   Min.   :    0.0   Min.   :    1.0   Min.   :   1.00  
+##  1st Qu.: 72.25   1st Qu.:    0.0   1st Qu.:    9.0   1st Qu.:   4.25  
+##  Median : 82.00   Median :   22.5   Median :   26.0   Median :  10.50  
+##  Mean   :135.06   Mean   :  425.6   Mean   :  125.2   Mean   :  53.02  
+##  3rd Qu.:210.59   3rd Qu.:  119.5   3rd Qu.:   64.5   3rd Qu.:  26.75  
+##  Max.   :258.00   Max.   :35000.0   Max.   :32150.0   Max.   :1113.00  
+##  NA&#39;s   :1014     NA&#39;s   :120       NA&#39;s   :7         NA&#39;s   :976      
+##     CasesAll           Rate1              Rate2          RateAll      
+##  Min.   :    1.0   Min.   :  0.4074   Min.   : 6.00   Min.   :  0.00  
+##  1st Qu.:    9.0   1st Qu.: 17.2500   1st Qu.:10.70   1st Qu.:  0.00  
+##  Median :   26.0   Median : 37.5000   Median :17.50   Median : 15.28  
+##  Mean   :  127.6   Mean   : 40.9253   Mean   :16.89   Mean   : 26.65  
+##  3rd Qu.:   66.0   3rd Qu.: 59.1875   3rd Qu.:21.90   3rd Qu.: 48.91  
+##  Max.   :32150.0   Max.   :100.0000   Max.   :29.69   Max.   :105.00  
+##  NA&#39;s   :7         NA&#39;s   :431        NA&#39;s   :1012    NA&#39;s   :108     
+##  Hospitalizations       Deaths                   Vehicle_1  
+##  Min.   :  0.0000   Min.   :0.00000   0               :694  
+##  1st Qu.:  0.0000   1st Qu.:0.00000   Oysters         : 46  
+##  Median :  0.0000   Median :0.00000   oysters         : 42  
+##  Mean   :  0.8856   Mean   :0.05005   Shellfish       : 21  
+##  3rd Qu.:  0.0000   3rd Qu.:0.00000   lettuce         : 11  
+##  Max.   :197.0000   Max.   :9.00000   Infected Persons: 10  
+##  NA&#39;s   :43         NA&#39;s   :43        (Other)         :198  
+##           Veh1                 Veh1_D_1    Veh2    
+##  No         :  1   0               :575   No :933  
+##  Unknown    : 82   Infected Persons: 60   Yes: 89  
+##  Unspecified:493   Oysters         : 47            
+##  Yes        :446   oysters         : 42            
+##                    Shellfish       : 20            
+##                    Food            : 14            
+##                    (Other)         :264            
+##                    Veh2_D_1    Veh3                      Veh3_D_1  
+##  0                     :814   No :1004   0                   :895  
+##                        :120   Yes:  18                       :109  
+##  Infected Persons      : 12              Contami ted Surfaces:  2  
+##  Contami ted Surfaces  :  8              Brandy S ps         :  1  
+##  salad                 :  4              Chicken             :  1  
+##  Vomit or Stool contact:  3              Coffee White        :  1  
+##  (Other)               : 61              (Other)             : 13  
+##         PCRSect        OBYear          Hemisphere     season   
+##  Both       :441   2006   :142   Northern   :939         : 67  
+##  Capsid     :138   2002   :134   Southern   : 81   Fall  :164  
+##  Polymerase :175   2004   :116   Unspecified:  2   Spring:222  
+##  Unspecified:268   2003   : 97                     Summer:126  
+##                    1999   : 80                     Winter:443  
+##                    1998   : 76                                 
+##                    (Other):377                                 
+##      MeanI1           MedianI1        Range_S_I1       Range_L_I1     
+##  Min.   : 0.0000   Min.   : 0.000   Min.   : 0.000   Min.   :  0.000  
+##  1st Qu.: 0.0000   1st Qu.: 0.000   1st Qu.: 0.000   1st Qu.:  0.000  
+##  Median : 0.0000   Median : 0.000   Median : 0.000   Median :  0.000  
+##  Mean   : 0.6644   Mean   : 1.588   Mean   : 1.066   Mean   :  3.976  
+##  3rd Qu.: 0.0000   3rd Qu.: 0.000   3rd Qu.: 0.000   3rd Qu.:  0.000  
+##  Max.   :48.0000   Max.   :65.000   Max.   :36.000   Max.   :168.000  
+##                                                                       
+##      MeanD1           MedianD1         Range_S_D1       Range_L_D1    
+##  Min.   :  0.000   Min.   :  0.000   Min.   : 0.000   Min.   :   0.0  
+##  1st Qu.:  0.000   1st Qu.:  0.000   1st Qu.: 0.000   1st Qu.:   0.0  
+##  Median :  0.000   Median :  0.000   Median : 0.000   Median :   0.0  
+##  Mean   :  1.579   Mean   :  2.552   Mean   : 1.486   Mean   :  12.7  
+##  3rd Qu.:  0.000   3rd Qu.:  0.000   3rd Qu.: 0.000   3rd Qu.:   0.0  
+##  Max.   :273.600   Max.   :235.200   Max.   :72.000   Max.   :1248.0  
+##                                                                       
+##      MeanA1           MedianA1        Range_Y_A1    Range_O_A1     
+##  Min.   : 0.0833   Min.   : 0.747   0      :891   Min.   :  0.000  
+##  1st Qu.:13.0000   1st Qu.: 9.000   1      : 10   1st Qu.:  0.000  
+##  Median :39.0000   Median :29.000   18     :  9   Median :  0.000  
+##  Mean   :38.2923   Mean   :29.485   23     :  7   Mean   :  7.077  
+##  3rd Qu.:56.0000   3rd Qu.:45.000   16     :  6   3rd Qu.:  0.000  
+##  Max.   :89.3300   Max.   :85.000   20     :  6   Max.   :103.000  
+##  NA&#39;s   :961       NA&#39;s   :973      (Other): 93                    
+##         Action1   
+##  No         :  3  
+##  Unknown    :  2  
+##  Unspecified:803  
+##  Yes        :214  
+##                   
+##                   
+##                   
+##                                                                                                                                                                                                                                         Action2_1  
+##  0                                                                                                                                                                                                                                           :807  
+##  recalled lettuce from wholesaler                                                                                                                                                                                                            : 11  
+##  Infection control practices essation of occupatio l therapy; cohort program;  visiting restrictions; symptomatic staff sent home                                                                                                            :  4  
+##  Restaurant was cleaned, closed, then professio lly cleaned                                                                                                                                                                                  :  4  
+##  Camp was clean, closed and the fi lly professio lly cleaned                                                                                                                                                                                 :  3  
+##  exclude members of affected groups from water sports, activities with shared implements; provided dedicated latrines, washing facilities, drinking water; excluded from food handling, preparation; isolated until asymptomatic for 48 hours:  3  
+##  (Other)                                                                                                                                                                                                                                     :190  
+##  Secondary     MeanI2           MedianI2          Range_S_I2     
+##     :  1   Min.   : 0.0000   Min.   : 0.00000   Min.   : 0.0000  
+##  No :972   1st Qu.: 0.0000   1st Qu.: 0.00000   1st Qu.: 0.0000  
+##  Yes: 49   Median : 0.0000   Median : 0.00000   Median : 0.0000  
+##            Mean   : 0.1203   Mean   : 0.04697   Mean   : 0.2172  
+##            3rd Qu.: 0.0000   3rd Qu.: 0.00000   3rd Qu.: 0.0000  
+##            Max.   :81.0000   Max.   :48.00000   Max.   :78.0000  
+##                                                                  
+##    Range_L_I2           MeanD2     MedianD2   Range_S_D2      
+##  Min.   :  0.0000   Min.   :0   Min.   :0   Min.   : 0.00000  
+##  1st Qu.:  0.0000   1st Qu.:0   1st Qu.:0   1st Qu.: 0.00000  
+##  Median :  0.0000   Median :0   Median :0   Median : 0.00000  
+##  Mean   :  0.4511   Mean   :0   Mean   :0   Mean   : 0.02348  
+##  3rd Qu.:  0.0000   3rd Qu.:0   3rd Qu.:0   3rd Qu.: 0.00000  
+##  Max.   :168.0000   Max.   :0   Max.   :0   Max.   :24.00000  
+##                                                               
+##    Range_L_D2           Mea.2             Media.2        
+##  Min.   : 0.00000   Min.   : 0.00000   Min.   : 0.00000  
+##  1st Qu.: 0.00000   1st Qu.: 0.00000   1st Qu.: 0.00000  
+##  Median : 0.00000   Median : 0.00000   Median : 0.00000  
+##  Mean   : 0.09393   Mean   : 0.08904   Mean   : 0.04795  
+##  3rd Qu.: 0.00000   3rd Qu.: 0.00000   3rd Qu.: 0.00000  
+##  Max.   :72.00000   Max.   :55.00000   Max.   :49.00000  
+##                                                          
+##    Range_Y_A2         Range_O_A2     
+##  Min.   : 0.00000   Min.   : 0.0000  
+##  1st Qu.: 0.00000   1st Qu.: 0.0000  
+##  Median : 0.00000   Median : 0.0000  
+##  Mean   : 0.05773   Mean   : 0.2211  
+##  3rd Qu.: 0.00000   3rd Qu.: 0.0000  
+##  Max.   :46.00000   Max.   :80.0000  
+##                                      
+##                                         Comments_1          Path1    
+##                                              : 14   No         :223  
+##  0                                           : 10   Unknown    :  3  
+##  2 of 3, paper about genetic a lysis, 1 death:  2   Unspecified:716  
+##  3 of 3, limited information available       :  2   Yes        : 80  
+##  Outbreak 10 of 47, limited information      :  2                    
+##  outbreak A in Table 1                       :  2                    
+##  (Other)                                     :990                    
+##                  Path2_1           Country            Category  
+##  0                   :833   Other      :447   Foodservice :309  
+##                      :109   Japan      :371   Leisure     :153  
+##  coliforms           :  8   USA        :108   Nursing Home:138  
+##  Astrovirus          :  4   Australia  : 21   Hospital    :126  
+##  E.coli              :  4   Multiple   : 17   Other       : 99  
+##  Campylobacter jejuni:  3   Unspecified: 15   School      : 68  
+##  (Other)             : 61   (Other)    : 43   (Other)     :129  
+##      State                   Setting_1     StartMonth        EndMonth     
+##  0      :909   0                  :110   Min.   : 0.000   Min.   : 0.000  
+##  NC     : 19   Restaurant         :104   1st Qu.: 2.000   1st Qu.: 0.000  
+##  NY     : 10   restaurant         : 70   Median : 4.000   Median : 0.000  
+##  AK     :  9   Hospital           : 39   Mean   : 5.532   Mean   : 2.414  
+##  FL     :  7   Hotel              : 25   3rd Qu.:10.000   3rd Qu.: 3.000  
+##  MI     :  6   Nursing Care Center: 25   Max.   :12.000   Max.   :12.000  
+##  (Other): 62   (Other)            :649                                    
+##       GGA              CA                        SA         new_GGA      
+##  Min.   :0.000   Min.   : 0.000   0               :693   Min.   :0.0000  
+##  1st Qu.:1.000   1st Qu.: 0.000   Lordsdale       : 45   1st Qu.:0.0000  
+##  Median :2.000   Median : 2.000   Farmington Hills: 18   Median :0.0000  
+##  Mean   :1.501   Mean   : 2.551   GII.4 2006b     : 16   Mean   :0.1693  
+##  3rd Qu.:2.000   3rd Qu.: 4.000   GII.4 2006a     : 15   3rd Qu.:0.0000  
+##  Max.   :2.000   Max.   :17.000   Desert Shield   : 14   Max.   :2.0000  
+##                  NA&#39;s   :1        (Other)         :221                   
+##      new_CA                 new_SA   
+##  Min.   :0.0000   0            :926  
+##  1st Qu.:0.0000   Toronto-CAN93: 15  
+##  Median :0.0000   Grimsby-like : 11  
+##  Mean   :0.2984   Hawaii-USA94 : 10  
+##  3rd Qu.:0.0000   CBW94-AUS    :  7  
+##  Max.   :9.0000   Chiba-JPN00  :  7  
+##                   (Other)      : 46  
+##                                                                         SA_resolved_from
+##                                                                                 :926    
+##  Zheng                                                                          : 69    
+##  abstraction                                                                    : 17    
+##  http://onlinelibrary.wiley.com/doi/10.1002/jmv.20403/pdf                       :  3    
+##  origi l article                                                                :  3    
+##  Diagnosis of Norovirus outbreaks by commercial ELISA or RT-PCR, de Bruin et al.:  1    
+##  (Other)                                                                        :  3    
+##       GGB               CB                SB         new_GGB      
+##  Min.   :0.0000   0      :886   0          :976   Min.   :0.0000  
+##  1st Qu.:0.0000   4      : 36   Lordsdale  :  3   1st Qu.:0.0000  
+##  Median :0.0000   3      : 22   Toronto    :  3   Median :0.0000  
+##  Mean   :0.3082   2      : 15   Birmingham :  2   Mean   :0.0274  
+##  3rd Qu.:0.0000   6      : 15   GII.4 2006b:  2   3rd Qu.:0.0000  
+##  Max.   :2.0000   1      :  9   GII.b      :  2   Max.   :2.0000  
+##                   (Other): 39   (Other)    : 34                   
+##      new_CB                   new_SB    
+##  Min.   : 0.00000   0            :1005  
+##  1st Qu.: 0.00000   Birmingham   :   2  
+##  Median : 0.00000   Chiba-JPN00  :   2  
+##  Mean   : 0.06947   Lsdale-GBR   :   2  
+##  3rd Qu.: 0.00000   Toronto-CAN93:   2  
+##  Max.   :14.00000   Bristol-GBR93:   1  
+##                     (Other)      :   8  
+##                                                                                                                                           SB_resolved_from
+##                                                                                                                                                   :1005   
+##  abstraction                                                                                                                                      :   2   
+##  Evaluation of a broadly reactive nucleic acid sequence based amplification assay for the detection of noroviruses in faecal material, Moore et al:   2   
+##  http://kcdc.labkm.net/vsd/database/gene_list.jsp?orgId=6&amp;cuTag=CL0005&amp;page=910&amp;orderCol=&amp;orderTag=&amp;searchIn=&amp;textIn=                             :   1   
+##  origi l article/Zheng                                                                                                                            :   2   
+##  Zheng                                                                                                                                            :  10   
+##                                                                                                                                                           
+##       GGC               CC        
+##  Min.   :0.0000   Min.   : 0.000  
+##  1st Qu.:0.0000   1st Qu.: 0.000  
+##  Median :0.0000   Median : 0.000  
+##  Mean   :0.1223   Mean   : 0.365  
+##  3rd Qu.:0.0000   3rd Qu.: 0.000  
+##  Max.   :2.0000   Max.   :17.000  
+##                                   
+##                                                                                                    SC     
+##  0                                                                                                  :997  
+##  H104-94-J                                                                                          :  2  
+##  95% homology with Sundsvall                                                                        :  1  
+##  99 and 98% deduced amino acid identity with FAY=98 and KAS/00 , respectively (both 92% nt identity):  1  
+##  BCCDC04-007                                                                                        :  1  
+##  Chiba                                                                                              :  1  
+##  (Other)                                                                                            : 19  
+##     new_ggc             new_cc                 new_sc    
+##  Min.   :0.000000   Min.   : 0.0000   0           :1018  
+##  1st Qu.:0.000000   1st Qu.: 0.0000   Fayetteville:   1  
+##  Median :0.000000   Median : 0.0000   Leeds-GBR00 :   1  
+##  Mean   :0.006849   Mean   : 0.0274   MOH99-HUN   :   1  
+##  3rd Qu.:0.000000   3rd Qu.: 0.0000   Whiterose   :   1  
+##  Max.   :2.000000   Max.   :14.0000                      
+##                                                          
+##                                                                                                                                           SC_resolved_from
+##                                                                                                                                                   :1018   
+##  abstraction                                                                                                                                      :   1   
+##  Evaluation of a broadly reactive nucleic acid sequence based amplification assay for the detection of noroviruses in faecal material, Moore et al:   1   
+##  Zheng                                                                                                                                            :   2   
+##                                                                                                                                                           
+##                                                                                                                                                           
+##                                                                                                                                                           
+##       GGD                CD                                  SD      
+##  Min.   :0.00000   0      :990   0                            :1014  
+##  1st Qu.:0.00000   3      :  6   GII.b                        :   2  
+##  Median :0.00000   4      :  5   Amsterdam                    :   1  
+##  Mean   :0.06067   8      :  5   BCCDC03-008                  :   1  
+##  3rd Qu.:0.00000   6      :  4   Bristol                      :   1  
+##  Max.   :2.00000   15     :  3   Harrow/2001/UK_Mexico/1989/MX:   1  
+##                    (Other):  9   (Other)                      :   2  
+##     new_ggd      new_cd      new_sd  SD_resolved_from
+##  Min.   :0   Min.   :0   Min.   :0   Mode:logical    
+##  1st Qu.:0   1st Qu.:0   1st Qu.:0   NA&#39;s:1022       
+##  Median :0   Median :0   Median :0                   
+##  Mean   :0   Mean   :0   Mean   :0                   
+##  3rd Qu.:0   3rd Qu.:0   3rd Qu.:0                   
+##  Max.   :0   Max.   :0   Max.   :0                   
+##                                                      
+##                                                                                                                                                        StrainOther 
+##  0                                                                                                                                                           :980  
+##  closest relative is SRSV/Apeldoorn/97/NET w/98% nucleotide identity over 219 bp of the polymerase region and 96% (over 283 bp) was also seen w/strain Arg320:  2  
+##  GII/8                                                                                                                                                       :  2  
+##  GIIb                                                                                                                                                        :  2  
+##  1                                                                                                                                                           :  1  
+##  100% similar to the calicivirus strains of S031/94/UK                                                                                                       :  1  
+##  (Other)                                                                                                                                                     : 34  
+##                                                                                               strainother_rc
+##  0                                                                                                   :1013  
+##  closest relative is SRSV/Apeldoorn/97/NET w/98% nucleotide identity over 219 bp of the polymerase re:   2  
+##  100% similar to the calicivirus strains of S031/94/UK                                               :   1  
+##  2 strains only referred to as strain A and strain B                                                 :   1  
+##  6                                                                                                   :   1  
+##  article discussed 2 separate strains found, but didn&#39;t identify either                              :   1  
+##  (Other)                                                                                             :   3  
+##          gge            ce                     se      
+##  0         :994   Min.   : 0.0000   0           :1012  
+##  1         :  7   1st Qu.: 0.0000   GIIb        :   2  
+##  2         : 20   Median : 0.0000   BCCDC04-002 :   1  
+##  Sindlesham:  1   Mean   : 0.1272   Fayetteville:   1  
+##                   3rd Qu.: 0.0000   GII.4 2006a :   1  
+##                   Max.   :17.0000   GII.4a 2004 :   1  
+##                                     (Other)     :   4  
+##                    SE_resolved_from      ggf                cf          
+##                            :1016    Min.   :0.00000   Min.   : 0.00000  
+##  abstraction of StrainOther:   6    1st Qu.:0.00000   1st Qu.: 0.00000  
+##                                     Median :0.00000   Median : 0.00000  
+##                                     Mean   :0.02055   Mean   : 0.08317  
+##                                     3rd Qu.:0.00000   3rd Qu.: 0.00000  
+##                                     Max.   :2.00000   Max.   :14.00000  
+##                                                                         
+##            sf            ggg               cg                     sg      
+##  0          :1021   Min.   :0.0000   Min.   : 0.00000   0          :1021  
+##  BCCDC03-013:   1   1st Qu.:0.0000   1st Qu.: 0.00000   BCCDC04-006:   1  
+##                     Median :0.0000   Median : 0.00000                     
+##                     Mean   :0.0137   Mean   : 0.05186                     
+##                     3rd Qu.:0.0000   3rd Qu.: 0.00000                     
+##                     Max.   :2.0000   Max.   :12.00000                     
+##                                                                           
+##       ggh                 ch                     sh      
+##  Min.   :0.000000   Min.   : 0.00000   0          :1020  
+##  1st Qu.:0.000000   1st Qu.: 0.00000   BCCDC03-032:   1  
+##  Median :0.000000   Median : 0.00000   GIIb       :   1  
+##  Mean   :0.006849   Mean   : 0.02251                     
+##  3rd Qu.:0.000000   3rd Qu.: 0.00000                     
+##  Max.   :2.000000   Max.   :14.00000                     
+##                                                          
+##       ggi                 ci                     si      
+##  Min.   :0.000000   Min.   :0.000000   0          :1021  
+##  1st Qu.:0.000000   1st Qu.:0.000000   BCCDC04-003:   1  
+##  Median :0.000000   Median :0.000000                     
+##  Mean   :0.002935   Mean   :0.003914                     
+##  3rd Qu.:0.000000   3rd Qu.:0.000000                     
+##  Max.   :2.000000   Max.   :3.000000                     
+##                                                          
+##       ggj                 cj                     sj      
+##  Min.   :0.000000   Min.   :0.000000   0          :1021  
+##  1st Qu.:0.000000   1st Qu.:0.000000   BCCDC04-008:   1  
+##  Median :0.000000   Median :0.000000                     
+##  Mean   :0.002935   Mean   :0.006849                     
+##  3rd Qu.:0.000000   3rd Qu.:0.000000                     
+##  Max.   :2.000000   Max.   :5.000000                     
+##                                                          
+##             Country2        Veh1_D_2  
+##  0              :547   0        :711  
+##  Sweden         : 71   Oyster   : 68  
+##  United Kingdom : 51   Shellfish: 23  
+##  The Netherlands: 49   oyster   : 16  
+##  Australia      : 41   Oysters  : 12  
+##  Finland        : 26   lettuce  : 11  
+##  (Other)        :237   (Other)  :181  
+##                                     Veh2_D_2            Veh3_D_2   
+##  0                                      :1000   0           :1020  
+##  Salad                                  :   3   house salad :   1  
+##  areas contami ted with index case vomit:   1   udon noodles:   1  
+##  assymptomatic foodhandler              :   1                      
+##  buffet spring rolls                    :   1                      
+##  coleslaw                               :   1                      
+##  (Other)                                :  15                      
+##                                                                                                                                           Action2_2  
+##  0                                                                                                                                             :887  
+##  groups with affected members were excluded from camp activities and limited to specific bathrooms and water fountains                         :  3  
+##  professio lly cleaned restaurant                                                                                                              :  3  
+##  1 week sanitation and sterilization of the ship after cruise 1, however outbreak continued on the next 5 cruises                              :  1  
+##  admission to the hospital closed 3 times, 34/41 guidlines for NoV outbreak control covered,  control implemented via the hospital hygiene team:  1  
+##  admissions suspended, handwashing, enviornmental cleaning, visitor restriction, linen cleaning, staff policy etc.                             :  1  
+##  (Other)                                                                                                                                       :126  
+##                                                                                                                                                     Comments_2 
+##  0                                                                                                                                                       :318  
+##                                                                                                                                                          : 22  
+##  Hosp A ward 7C                                                                                                                                          :  2  
+##  Hosp A ward 7E                                                                                                                                          :  2  
+##  Outbreak 13 of 19 Iritani 2008                                                                                                                          :  2  
+##  1 of 12 outbreaks reported in shinkawa article; cases/persons at risk and the subsequent attack rate includes the food handler data presented in table 1:  1  
+##  (Other)                                                                                                                                                 :675  
+##                   Path2_2          Setting_2            category1  
+##  0                    :976   0          :350   Foodservice   :309  
+##  Kobuvirus            :  4   Restaurant :154   Hospital/Nursi:225  
+##  Adenovirus           :  2              : 22   Leisure       :153  
+##  astrovirus           :  2   Hotel      : 18   Other         :120  
+##  Clostridium difficile:  2   cruise ship: 14   School/Daycare: 84  
+##  rotavirus            :  2   multiple   : 11   Unknown       : 74  
+##  (Other)              : 34   (Other)    :453   (Other)       : 57  
+##  strainothergg2c4   gg2c4         Vomit            IncInd        
+##  Min.   :0.000000      :716   Min.   :0.0000   Min.   :0.000000  
+##  1st Qu.:0.000000   Yes:306   1st Qu.:0.0000   1st Qu.:0.000000  
+##  Median :0.000000             Median :0.0000   Median :0.000000  
+##  Mean   :0.005871             Mean   :0.4907   Mean   :0.001957  
+##  3rd Qu.:0.000000             3rd Qu.:1.0000   3rd Qu.:0.000000  
+##  Max.   :1.000000             Max.   :1.0000   Max.   :1.000000  
+##                               NA&#39;s   :1                          
+##      SymInd           PooledLat        PooledSym        PooledAge     
+##  Min.   :0.000000   Min.   : 0.000   Min.   : 0.000   Min.   : 0.000  
+##  1st Qu.:0.000000   1st Qu.: 0.000   1st Qu.: 0.000   1st Qu.: 0.000  
+##  Median :0.000000   Median : 0.000   Median : 0.000   Median : 0.000  
+##  Mean   :0.005871   Mean   : 1.889   Mean   : 3.154   Mean   : 2.401  
+##  3rd Qu.:0.000000   3rd Qu.: 0.000   3rd Qu.: 0.000   3rd Qu.: 0.000  
+##  Max.   :1.000000   Max.   :67.500   Max.   :96.000   Max.   :85.000  
+##                                                       NA&#39;s   :2       
+##  IndividualLatent IndividualSymptomatic
+##  Mode:logical      :1017               
+##  NA&#39;s:1022        Y:   5               
+##                                        
+##                                        
+##                                        
+##                                        
+## </code></pre>
+<p>Everything seems to have been read and present.</p>
+</div>
+<div id="data-exploration-and-cleaning" class="section level1">
+<h1>Data exploration and cleaning</h1>
+<div id="investigating-the-outcome-of-interest" class="section level2">
+<h2>Investigating the outcome of interest</h2>
+<p>Let’s assume that our main outcome of interest is the fraction of individuals that become infected in a given outbreak. The data reports that outcome (called <code>RateAll</code>), but we’ll also compute it ourselves so that we can practice creating new variables. To do so, take a look at the data (maybe peek at the Codebook) and decide which of the existing variables you should use to compute the new one. This new outcome variable will be added to the data frame.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># Use the `mutate()` function from the `dplyr` package to create a new column with this value. Call the new variable `fracinf`.</span></a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">d &lt;-<span class="st"> </span>data_raw <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">fracinf =</span> (CasesAll<span class="op">/</span>RiskAll)<span class="op">*</span><span class="dv">100</span>)</a></code></pre></div>
+<div class="note">
+<p>Note the notation <code>dplyr::</code> in front of <code>mutate</code>. This is not strictly necessary, but it helps in 2 ways. First, this tells the reader explicitly from which package the function comes. This is useful for quickly looking at the help file of the function, or if we want to adjust which packages are loaded/used. It also avoids occasional confusion if a function exists more than once (e.g. <code>filter</code> exists both in the <code>stats</code> and <code>dplyr</code> package). If the package is not specified, <code>R</code> takes the function from the package that was loaded last. This can sometimes produce strange error messages. I thus often (but not always) write the package name in front of the function.</p>
+</div>
+<div class="fyi">
+<p>As you see in the Rmd file, the previous text box is created by placing texts between the <code>:::</code> symbols and specifying some name. This allows you to apply your own styling to specific parts of the text. You define your style in a css file (here called <code>customstyles.css</code>), and you need to list that file in the <code>_site.yml</code> file. The latter file also lets you change the overall theme. You can choose from the library of <a href="https://bootswatch.com/">free Bootswatch themes</a>.</p>
+</div>
+<p>Use both text summaries and plots to take a look at the new variable you created to see if everything looks ok or if we need further cleaning.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="co">#Write code that takes a look at the values of the `fracinf` variable you created. Look at both text summaries and a figure.</span></a>
+<a class="sourceLine" id="cb17-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="kw">glimpse</span>(d<span class="op">$</span>fracinf)</a></code></pre></div>
+<pre><code>##  num [1:1022] Inf 60.2 20.8 100 60 ...</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">summary</span>(d<span class="op">$</span>fracinf)</a></code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##  0.3995 28.8324 63.0789     Inf     Inf     Inf     120</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">str</span>(d<span class="op">$</span>fracinf)</a></code></pre></div>
+<pre><code>##  num [1:1022] Inf 60.2 20.8 100 60 ...</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">head</span>(d<span class="op">$</span>fracinf)</a></code></pre></div>
+<pre><code>## [1]       Inf  60.18519  20.76923 100.00000  60.00000  75.00000</code></pre>
+<p>We notice there are NAs in this variable and the distribution is not normal. The latter is somewhat expected since our variable is a proportion, so it has to be between 0 and 1. There are also a lot of infinite values. Understand where they come from.</p>
+<p>Let’s take a look at the <code>RateAll</code> variable recorded in the dataset and compare it to ours. First, create a plot that lets you quickly see if/how the variables differ.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># Plot one variable on the x axis, the other on the y axis</span></a>
+<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="co"># also plot the difference of the 2 variables</span></a>
+<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="co"># make sure you adjust so both are in the same units</span></a></code></pre></div>
+<p>Both ways of plotting the data show that for most outbreaks, the two ways of getting the outcome agree. So that’s good. But we need to look closer and resolve the problem with infinite values above. Check to see what the <code>RateAll</code> variable has for those infinite values.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="co">#Write code that looks at the values of RateAll where we have inifinite values</span></a></code></pre></div>
+<p>You should find that all of the reported values are 0. So what makes more sense? You should have figured out that the infinite values in our computed variables arise because the <code>RiskAll</code> variable is 0. That variable contains the total number of persons at risk for an outbreak. If nobody is at risk of getting infected, of course, we can’t get any infected. So <code>RateAll</code> being 0 is technically correct. But does it make sense to include “outbreaks” in our analysis where nobody is at risk of getting infected? One should question how those got into the spreadsheet in the first place.</p>
+<p><strong>Having to deal with “weirdness” in your data like this example is common. You often need to make a decision based on best judgment.</strong></p>
+<p>Here, I think that if nobody is at risk, we shouldn’t include those outbreaks in further analysis. Thus, we’ll go with our computed outcome and remove all observations that have missing or infinite values for the outcome of interest, since those can’t be used for model fitting. Thus, we go ahead and remove any observations that have un-useable values in the outcome.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="co">#Write code that removes all observations that have an outcome that is not very useful, i.e. either NA or infinity. Then look at the outcome variable again to make sure things are fixed. Also check the size of the new dataset to see by how much it shrunk.</span></a></code></pre></div>
+<p>You should find that we lost a lot of data, we are down to 579 observations (from a starting 1022). That would be troublesome for most studies if that would mean subjects drop out (that could lead to bias). Here it’s maybe less problematic since each observation is an outbreak collected from the literature. Still, dropping this many could lead to bias if all the ones that had NA or Infinity were somehow systematically different. It would be useful to look into and discuss in a real analysis.</p>
+</div>
+<div id="wrangling-the-predictors" class="section level2">
+<h2>Wrangling the predictors</h2>
+<p>Not uncommon for real datasets, this one has a lot of variables. Many are not too meaningful for modeling. Our question is what predicts the fraction of those that get infected, i.e., the new outcome we just created. We should first narrow down the predictor variables of interest <em>based on scientific grounds.</em></p>
+<p>For this analysis exercise, we just pick the following variables for further analysis: <code>Action1, CasesAll, Category, Country, Deaths, GG2C4, Hemisphere, Hospitalizations</code>, <code>MeanA1, MeanD1, MeanI1, MedianA1, MedianD1, MedianI1</code>, <code>OBYear, Path1, RiskAll, Season, Setting, Trans1, Vomit.</code> Of course, we also need to keep our outcome of interest.</p>
+<p>Note that - as often happens for real data - there are inconsistencies between the codebook and the actual datasheet. Here, names of variables and spelling in the codebook do not fully agree with the data. The above list of variables is based on codebook, and you need to make sure you get the right names from the data when selecting those variables.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="co">#write code to select the specified variables</span></a></code></pre></div>
+<p>Your reduced dataset should contain 579 observations and 22 variables.</p>
+<p>With this reduced dataset, we’ll likely still need to perform further cleaning. We can start by looking at missing data. While the <code>summary</code> function gives that information, it is somewhat tedious to pull out. We can just focus on NA for each variable and look at the text output, or for lots of predictors, a graphical view is easier to understand. The latter has the advantage of showing potential clustering of missing values.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="co"># this code prints number of missing for each variable (assuming your dataframe is called d)</span></a>
+<a class="sourceLine" id="cb29-2" data-line-number="2"><span class="co"># print(colSums(is.na(d))) </span></a>
+<a class="sourceLine" id="cb29-3" data-line-number="3"><span class="co"># write code to use the visdat R package, add code that plots a heatmap of missing values  </span></a></code></pre></div>
+<p>It looks like we have a lot of missing data for the <code>MeanA1</code> and <code>MedianA1</code> variables. If we wanted to keep those variables, we would be left with very few observations. So let’s drop those two variables. After that, we will drop all observations that have missing data (seems to be <code>Hospitalization</code> and <code>Deaths</code>).</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="co"># write code to remove the 2 &quot;A1&quot; variables, then drop all remaining observations with NA</span></a></code></pre></div>
+<p>Let’s now check the format of each variable. Depending on how you loaded the data, some variables might not be in the right format. Make sure everything that should be numeric is numeric/integer, everything that should be a factor is a factor. There should be no variable coded as <code>character</code>. Once all variables have the right format, take a look at the data again.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="co"># write code to format variables as needed</span></a></code></pre></div>
+<p>Take another look at the data. You should find that for the dataset, most things look reasonable, but the variable <code>Setting_1</code> has a lot of different levels/values. That many categories, most with only a single entry, will likely not be meaningful for modeling. One option is to drop the variable. But assume we think it’s an important variable to include and we are especially interested in the difference between restaurant settings and other settings. We could then create a new variable that has only two levels, <code>Restaurant</code> and <code>Other</code>.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="co">#write code that creates a new variable called `Setting` based on `Setting_1` buth with only 2 levels, `Restaurant` and `Other`. Then remove the `Setting_1` variable. Note that restaurant is sometimes capitalized and sometimes not. You need to fix that first. For these lines of code, the &#39;Factor&#39; chapter in R4DS might be helpful here.</span></a></code></pre></div>
+</div>
+<div id="data-visualization" class="section level2">
+<h2>Data visualization</h2>
+<p>Next, let’s create a few plots showing the outcome and the predictors.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="co">#write code that produces plots showing our outcome of interest on the y-axis and each numeric predictor on the x-axis.</span></a>
+<a class="sourceLine" id="cb33-2" data-line-number="2"><span class="co">#you can use the facet_wrap functionality in ggplot for it, or do it some other way.</span></a></code></pre></div>
+<p>One thing I notice in the plots is that there are lots of zeros for many predictors and things look skewed. That’s ok, but means we should probably standardize these predictors. One strange finding (that I could have caught further up when printing the numeric summaries, but didn’t) is that there is (at least) one outbreak that has outbreak year reported as 0. That is, of course, wrong and needs to be fixed. There are different ways of fixing it, the best, of course, would be to trace it back and try to fix it with the right value. We won’t do that here. Instead, we’ll remove that observation.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="co"># write code that figures out which observation(s) have 0 years and remove those from the dataset.</span></a>
+<a class="sourceLine" id="cb34-2" data-line-number="2"><span class="co"># do some quick check to make sure OByear values are all reasonable now</span></a></code></pre></div>
+<p>Another useful check is to see if there are strong correlations between some of the numeric predictors. That might indicate collinearity, and some models can’t handle that very well. In such cases, one might want to remove a predictor. We’ll create a correlation plot of the numeric variables to inspect this.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="co"># using e.g. the corrplot package (or any other you like), create a correlation plot of the numeric variables</span></a></code></pre></div>
+<p>It doesn’t look like there are any very strong correlations between continuous variables, so we can keep them all for now.</p>
+<p>Next, let’s create plots for the categorical variables, again our main outcome of interest on the y-axis.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="co">#write code that produces plots showing our outcome of interest on the y-axis and each categorical predictor on the x-axis.</span></a>
+<a class="sourceLine" id="cb36-2" data-line-number="2"><span class="co">#you can use the facet_wrap functionality in ggplot for it, or do it some other way.</span></a></code></pre></div>
+<p>The plots do not look pretty, which is ok for exploratory. We can see that a few variables have categories with very few values (again, something we could have also seen using <code>summary</code>, but graphically it is usually easier to see). This will likely produce problems when we fit using cross-validation, so we should fix that. Options we have:</p>
+<ul>
+<li>Completely drop those variables if we decide they are not of interest after all.</li>
+<li>Recode values by combining, like we did above with the <code>Setting</code> variable.</li>
+<li>Remove observations with those rare values.</li>
+</ul>
+<p>Let’s use a mix of these approaches. We’ll drop the <code>Category</code> variable, we’ll remove the observation(s) with <code>Unspecified</code> in the <code>Hemisphere</code> variable, and we’ll combine <code>Unknown</code> with <code>Unspecified</code> for <code>Action1</code> and <code>Path1</code> variables.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="co"># write code that implements the cleaning steps described above.</span></a>
+<a class="sourceLine" id="cb37-2" data-line-number="2"><span class="co"># then check again (e.g. with a plot) to make sure things worked</span></a></code></pre></div>
+<p>At this step, you should have a dataframe containing 551 observations, and 19 variables: 1 outcome, 9 numeric/integer predictors, and 9 factor variables. There should be no missing values.</p>
+</div>
+</div>
+<div id="model-fitting" class="section level1">
+<h1>Model fitting</h1>
+<p>We can finally embark on some modeling - or at least we can get ready to do so.</p>
+<p>We will use a lot of the <code>caret</code> package functionality for the following tasks. You might find <a href="https://topepo.github.io/caret/index.html">the package website</a> useful as you try to figure things out.</p>
+<div id="data-splitting" class="section level2">
+<h2>Data splitting</h2>
+<p>Depending on the data and question, we might want to reserve some of the data for a final validation/testing step or not. Here, to illustrate this process and the idea of reserving some data for the very end, we’ll split things into a train and test set. All the modeling will be done with the train set, and final evaluation of the model(s) happens on the test set. We use the <code>caret</code> package for this.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="co">#this code does the data splitting. I still assume that your data is stored in the `d` object.</span></a>
+<a class="sourceLine" id="cb38-2" data-line-number="2"><span class="co">#uncomment to run</span></a>
+<a class="sourceLine" id="cb38-3" data-line-number="3"><span class="co">#set.seed(123)</span></a>
+<a class="sourceLine" id="cb38-4" data-line-number="4"><span class="co">#trainset &lt;- caret::createDataPartition(y = d$fracinf, p = 0.7, list = FALSE)</span></a>
+<a class="sourceLine" id="cb38-5" data-line-number="5"><span class="co">#data_train = d[trainset,] #extract observations/rows for training, assign to new variable</span></a>
+<a class="sourceLine" id="cb38-6" data-line-number="6"><span class="co">#data_test = d[-trainset,] #do the same for the test set</span></a></code></pre></div>
+<div class="note">
+<p>Since the above code involves drawing samples, and we want to do that reproducible, we also set a random number seed with <code>set.seed()</code>. With that, each time we perform this sampling, it will be the same, unless we change the seed. If nothing about the code changes, setting the seed once at the beginning is enough. If you want to be extra sure, it is a good idea to set the seed at the beginning of every code chunk that involves random numbers (i.e., sampling or some other stochastic/random procedure). We do that here.</p>
+</div>
+</div>
+<div id="a-null-model" class="section level2">
+<h2>A null model</h2>
+<p>Now let’s begin with the model fitting. We’ll start by looking at a <em>null model</em>, which is just the mean of the data. This is, of course, a stupid “model” but provides some baseline for performance.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="co">#write code that computes the RMSE for a null model, which is just the mean of the outcome</span></a>
+<a class="sourceLine" id="cb39-2" data-line-number="2"><span class="co">#remember that from now on until the end, everything happens with the training data</span></a></code></pre></div>
+</div>
+<div id="single-predictor-models" class="section level2">
+<h2>Single predictor models</h2>
+<p>Now we’ll fit the outcome to each predictor one at a time. To evaluate our model performance, we will use cross-validation and the caret package. Note that we just fit a linear model. <code>caret</code> itself is not a model. Instead, it provides an interface that allows easy access to many different models and has functions to do a lot of steps quickly - as you will see below. Most of the time, you can do all our work through the <code>caret</code> (or <code>mlr</code>) workflow. The problem is that because <code>caret</code> calls another package/function, sometimes things are not as clear, especially when you get an error message. So occasionally, if you know you want to use a specific model and want more control over things, you might want to not use <code>caret</code> and instead go straight to the model function (e.g. <code>lm</code> or <code>glm</code> or…). We’ve done a bit of that before, for the remainder of the class we’ll mostly access underlying functions through <code>caret</code>.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="co">#There is probably a nicer tidyverse way of doing this. I just couldn&#39;t think of it, so did it this way.</span></a>
+<a class="sourceLine" id="cb40-2" data-line-number="2"><span class="co">#set.seed(1111) #makes each code block reproducible</span></a>
+<a class="sourceLine" id="cb40-3" data-line-number="3"><span class="co">#fitControl &lt;- trainControl(method=&quot;repeatedcv&quot;,number=5,repeats=5) #setting CV method for caret</span></a>
+<a class="sourceLine" id="cb40-4" data-line-number="4"><span class="co">#Npred &lt;- ncol(data_train)-1 # number of predictors</span></a>
+<a class="sourceLine" id="cb40-5" data-line-number="5"><span class="co">#resultmat &lt;- data.frame(Variable = names(data_train)[-1], RMSE = rep(0,Npred)) #store values for RMSE for each variable</span></a>
+<a class="sourceLine" id="cb40-6" data-line-number="6"><span class="co">#for (n in 2:ncol(data_train)) #loop over each predictor. For this to work, outcome must be in 1st column</span></a>
+<a class="sourceLine" id="cb40-7" data-line-number="7"><span class="co">#{</span></a>
+<a class="sourceLine" id="cb40-8" data-line-number="8"> <span class="co"># fit1 &lt;- train( as.formula(paste(&quot;fracinf ~&quot;,names(data_train)[n])) , data = data_train, method = &quot;lm&quot;, trControl = fitControl) </span></a>
+<a class="sourceLine" id="cb40-9" data-line-number="9"> <span class="co">#resultmat[n-1,2]= fit1$results$RMSE  </span></a>
+<a class="sourceLine" id="cb40-10" data-line-number="10"><span class="co">#}</span></a>
+<a class="sourceLine" id="cb40-11" data-line-number="11"><span class="co">#print(resultmat)</span></a></code></pre></div>
+<p>This analysis shows 2 things that might need closer inspections. We get some error/warning messages, and most RMSE of the single-predictor models are not better than the null model. Usually, this is cause for more careful checking until you fully understand what is going on. But for this exercise, let’s blindly press on!</p>
+</div>
+<div id="multi-predictor-models" class="section level2">
+<h2>Multi-predictor models</h2>
+<p>Now let’s perform fitting with multiple predictors. Use the same setup as the code above to fit the outcome to all predictors at the same time. Do that for 3 different models: linear (<code>lm</code>), regression splines (<code>earth</code>), K nearest neighbor (<code>knn</code>). You might have to install/load some extra R packages for that. If that’s the case, <code>caret</code> will tell you.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1"><span class="kw">set.seed</span>(<span class="dv">1111</span>) <span class="co">#makes each code block reproducible</span></a>
+<a class="sourceLine" id="cb41-2" data-line-number="2"><span class="co">#write code that uses the train function in caret to fit the outcome to all predictors using the 3 methods specified.</span></a>
+<a class="sourceLine" id="cb41-3" data-line-number="3"><span class="co">#report the RMSE for each method. Note that knn and earth perform some model tuning (we&#39;ll discuss this soon) and report multiple RMSE. Use the lowest value.</span></a></code></pre></div>
+<p>So we find that some of these models do better than the null model and the single-predictor ones. KNN seems the best of those 3. Next, we want to see if pre-processing our data a bit more might lead to even better results.</p>
+</div>
+<div id="multi-predictor-models-with-pre-processing" class="section level2">
+<h2>Multi-predictor models with pre-processing</h2>
+<p>Above, we fit outcome and predictors without doing anything to them. Let’s see if some further processing improves the performance of our multi-predictor models.</p>
+<p>First, we look at near-zero variance predictors. Those are predictors that have very little variation. For instance, for a categorical predictor, if 99% of the values are a single category, it is likely not a useful predictor. A similar idea holds for continuous predictors. If they have very little spread, they might likely not contribute much ‘signal’ to our fitting and instead mainly contain noise. Some models, such as trees, which we’ll cover soon, can ignore useless predictors and just remove them. Other models, e.g., linear models, are generally performing better if we remove such useless predictors.</p>
+<p>Note that in general, one should apply all these processing steps to the training data only. Otherwise, you would use information from the test set to decide on data manipulations for all data (called data leakage). It is a bit hard to say when to make the train/test split. Above, we did a good bit of cleaning on the full dataset before we split. One could argue that one should split right at the start, then do the cleaning. However, this doesn’t work for certain procedures (e.g., removing observations with NA).</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1"><span class="co">#write code using the caret function `nearZeroVar` to look at potential uninformative predictors. Set saveMetrics to TRUE. Look at the results </span></a></code></pre></div>
+<p>You’ll see that several variables are flagged as having near-zero variance. Look for instance at <code>Deaths</code>, you’ll see that almost all outbreaks have zero deaths. It is a judgment call if we should remove all those flagged as near-zero-variance or not. For this exercise, we will.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1"><span class="co">#write code that removes all variables with near zero variance from the data </span></a></code></pre></div>
+<p>You should be left with 13 variables (including the outcome).</p>
+<p>Next, we noticed during our exploratory analysis that it might be useful to center and scale predictors. So let’s do that now. With caret, one can do that by providing the <code>preProc</code> setting inside the <code>train</code> function. Set it to center and scale the data, then run the 3 models from above again.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1"><span class="co">#write code that repeats the multi-predictor fits from above, but this time applies centering and scaling of variables.</span></a>
+<a class="sourceLine" id="cb44-2" data-line-number="2"><span class="co">#look at the RMSE for the new fits</span></a></code></pre></div>
+<p>So it looks like the linear mode got a bit better, KNN actually got worse, and MARS didn’t change much. Since for KNN, “the data is the model”, removing some predictors might have had a detrimental impact. Though to say something more useful, I would want to look much closer into what’s going on and if these pre-processing steps are useful or not. For this exercise, let’s move on.</p>
+</div>
+<div id="model-uncertainty" class="section level2">
+<h2>Model uncertainty</h2>
+<p>We can look at the uncertainty in model performance, e.g., the RMSE. Let’s look at it for the models fit to the un-processed data.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1"><span class="co">#Use the `resamples` function in caret to extract uncertainty from the 3 models fit to the data  that doesn&#39;t have predictor pre-processing, then plot it</span></a></code></pre></div>
+<p>It seems that the model uncertainty for the outcome is fairly narrow for all models. We can (and in a real setting should) do further explorations to decide which model to choose. This is based part on what the model results are, and part on what we want. If we want a very simple, interpretable model, we’d likely use the linear model. If we want a model that has better performance, we might use MARS or - with the un-processed dataset - KNN.</p>
+</div>
+<div id="residual-plots" class="section level2">
+<h2>Residual plots</h2>
+<p>For this exercise, let’s just pick one model. We’ll go with the best performing one, namely KNN (fit to non-pre-processed data). Let’s take a look at the residual plot.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1"><span class="co">#Write code to get model predictions for the outcome on the training data, and plot it as function of actual outcome values.</span></a>
+<a class="sourceLine" id="cb46-2" data-line-number="2"><span class="co">#also compute residuals (the difference between prediction and actual outcome) and plot that</span></a></code></pre></div>
+<p>Both plots look ok, predicted vs. outcome is along the 45-degree line, and the residual plot shows no major pattern. Of course, for a real analysis, we would again want to dig a bit deeper. But we’ll leave it at this for now.</p>
+</div>
+<div id="final-model-evaluation" class="section level2">
+<h2>Final model evaluation</h2>
+<p>Let’s do a final check, evaluate the performance of our final model on the test set.</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" data-line-number="1"><span class="co">#Write code that computes model predictions and for test data, then compute SSR and RMSE.</span></a></code></pre></div>
+<p>Since we have a different number of observations, the result isn’t expected to be quite the same as for the training data (despite dividing by sample size to account for that). But it’s fairly close, and surprisingly not actually worse. So the KNN model seems to be reasonable at predicting. Now if its performance is ‘good enough’ is a scientific question.</p>
+<p>We will leave it at this, for now, we will likely (re)visit some other topics soon as we perform more such analysis exercises in upcoming weeks. But you are welcome to keep exploring this dataset and try some of the other bits and pieces we covered.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
