@@ -30,6 +30,7 @@ library('ggplot2')
 library('corrplot') #to make a correlation plot. You can use other options/packages.
 library('visdat') #for missing data visualization
 library('earth')
+library('gtools')
 ```
 
 
@@ -148,7 +149,7 @@ Note that - as often happens for real data - there are inconsistencies between t
 ```{r reducepredictors}
 #write code to select the specified variables
 moving_forward <- better %>%
-  dplyr::select(Action1, CasesAll, Category, Country, Deaths, gg2c4, Hemisphere, Hospitalizations, MeanA1, MeanD1, MeanI1, MedianA1, MedianD1, MedianI1, OBYear, Path1, RiskAll, season, Setting_1, Setting_2, Trans1, Vomit, RateAll, fracinf)
+  dplyr::select(Action1, CasesAll, Category, Country, Deaths, gg2c4, Hemisphere, Hospitalizations, MeanA1, MeanD1, MeanI1, MedianA1, MedianD1, MedianI1, OBYear, Path1, RiskAll, season, Setting_1, Trans1, Vomit, fracinf)
 
 str(moving_forward)
 summary(moving_forward)
@@ -165,14 +166,27 @@ We can start by looking at missing data. While the `summary` function gives that
 
 ```{r check-reduced-data}
 # this code prints number of missing for each variable (assuming your dataframe is called d)
-# print(colSums(is.na(d))) 
+
+print(colSums(is.na(moving_forward))) 
+
 # write code to use the visdat R package, add code that plots a heatmap of missing values  
+
+vis_miss(moving_forward, sort_miss= TRUE)
 ```
 
 It looks like we have a lot of missing data for the `MeanA1` and `MedianA1` variables. If we wanted to keep those variables, we would be left with very few observations. So let's drop those two variables. After that, we will drop all observations that have missing data (seems to be `Hospitalization` and `Deaths`).
 
 ```{r further-reduce-data}
 # write code to remove the 2 "A1" variables, then drop all remaining observations with NA
+
+almost_there <- moving_forward %>%
+  dplyr::select(Action1, CasesAll, Category, Country, Deaths, gg2c4, Hemisphere, Hospitalizations, MeanD1, MeanI1, MedianD1, MedianI1, OBYear, Path1, RiskAll, season, Setting_1, Trans1, Vomit, fracinf)
+
+almost_there <- na.omit(almost_there)
+
+str(almost_there)
+summary(almost_there)
+
 ```
 
 
@@ -180,12 +194,36 @@ Let's now check the format of each variable. Depending on how you loaded the dat
 
 ```{r further-clean-data}
 # write code to format variables as needed
+vis_dat(almost_there)
+
+#None of our variables are coded as characters and seemed to all be coded appropriately.
 ```
 
 Take another look at the data. You should find that for the dataset, most things look reasonable, but the variable `Setting_1` has a lot of different levels/values. That many categories, most with only a single entry, will likely not be meaningful for modeling. One option is to drop the variable. But assume we think it's an important variable to include and we are especially interested in the difference between restaurant settings and other settings. We could then create a new variable that has only two levels, `Restaurant` and `Other`.
 
 ```{r recode-setting}
 #write code that creates a new variable called `Setting` based on `Setting_1` buth with only 2 levels, `Restaurant` and `Other`. Then remove the `Setting_1` variable. Note that restaurant is sometimes capitalized and sometimes not. You need to fix that first. For these lines of code, the 'Factor' chapter in R4DS might be helpful here.
+
+
+restaurant_settings <- subset(almost_there, Setting_1 == "restaurant" | Setting_1 == "Restaurant")
+other_settings <- subset(almost_there, Setting_1 != "restaurant" & Setting_1 != "Restaurant")
+restaurant_settings_edit <- restaurant_settings %>%
+  mutate(Setting = "Restaurant") %>%
+  select(-c(Setting_1))
+  
+other_settings_edit <- other_settings %>%
+  mutate(Setting = "Other") %>%
+  select(-c(Setting_1))
+  
+final_draft <- smartbind(restaurant_settings_edit,other_settings_edit)
+str(final_draft)
+ggplot(almost_there, aes(Setting_1, CasesAll)) + geom_point()
+ggplot(final_draft, aes(Setting, CasesAll)) + geom_point()
+
+sum(almost_there$CasesAll)
+sum(final_draft$CasesAll)
+if(sum(almost_there$RateAll) == sum(almost_there$RateAll))
+  print("Done")
 ```
 
 
